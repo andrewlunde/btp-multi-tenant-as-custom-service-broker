@@ -1,0 +1,25 @@
+_schema-version: "2.1"
+ID: com.sap.xs2.sbf-simple-consumer
+version:  0.1.0
+
+modules:
+ - name: products-service-consumer
+   type: nodejs
+   path: .
+   parameters:
+      memory: 128M
+   build-parameters:
+      ignore: [".gitignore", manifest.yml, "*.mtaext", "mta.*", "*.mtar", ".mta/"]
+   requires:
+    - name: products-service
+      properties:
+        PRODUCTS_SERVICE_NAME: ~{service-name}
+
+resources:
+ - name: products-service
+   type: org.cloudfoundry.managed-service
+   parameters:
+     service: products-service-${user}
+     service-plan: default
+   properties:
+     service-name: ${service-name}

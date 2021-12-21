@@ -1,0 +1,21 @@
+{
+  "name": "products-service",
+  "version": "1.0.0",
+  "description": "Example products service",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@sap/sbss": "^4.1.0",
+    "@sap/hdbext": "^6.2.0",
+    "@sap/xsenv": "^2.2.0",
+    "express": "^4.17.1",
+    "passport": "^0.4.0",
+    "passport-http": "^0.3.0"
+  },
+  "engines": {
+    "node": "^12.0.0"
+  }
+}

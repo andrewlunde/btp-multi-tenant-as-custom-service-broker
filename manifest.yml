@@ -1,0 +1,53 @@
+---
+applications:
+
+- name: products-service
+  host: products-service-acl
+  memory: 128M
+  path: service
+  services:
+    - products-sbss
+  env:
+    SBSS_SERVICE_NAME: products-sbss
+
+- name: products-service-broker
+  host: products-service-broker-acl
+  memory: 128M
+  path: broker
+  services:
+    - products-sbss
+    - broker-audit
+  health-check-type: http
+  health-check-http-endpoint: /health
+  env:
+      SBF_TENANT_ID: 0f49ad6c-264b-47de-9149-c0e2c5b13765
+      SBF_CREDENTIALS_PROVIDER_SERVICE: products-sbss
+      SBF_CATALOG_SUFFIX: acl
+      SBF_BROKER_CREDENTIALS_HASH: >
+        {
+          "[user]": "[hashed-password]"
+        }
+      SBF_SERVICE_CONFIG: >
+        {
+          "products-service": {
+            "extend_credentials": {
+              "shared": {
+                "vendor": "SAP"
+              },
+              "per_plan": {
+                "default": {
+                  "url": "https://products-service-acl.cfapps.us10.hana.ondemand.com/products"
+                }
+              }
+            }
+          }
+        }
+
+- name: products-service-consumer
+  host: products-service-consumer-acl
+  memory: 128M
+  path: consumer
+  services:
+    - products-service-instance
+  env:
+    PRODUCTS_SERVICE_NAME: products-service-instance

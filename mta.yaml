@@ -1,0 +1,68 @@
+_schema-version: "2.1"
+ID: com.sap.xs2.sbf-simple-service
+version:  0.1.0
+
+modules:
+ - name: products-broker
+   type: nodejs
+   path: ./broker
+   parameters:
+      memory: 128M
+      create-service-broker: true
+      service-broker-space-scoped: true
+      service-broker-name: products-broker-${user}
+      service-broker-user: ~{broker-credentials/user}
+      service-broker-password: ~{broker-credentials/password}
+      service-broker-url: ${default-url}
+   properties:
+      SBF_TENANT_ID: ~{broker-config/tenantId}
+      SBF_CATALOG_SUFFIX: ${user}
+      SBF_BROKER_CREDENTIALS: "{ \"~{broker-credentials/user}\": \"~{broker-credentials/password}\" }"
+   build-parameters:
+      ignore: [".gitignore", manifest.yml, "*.mtaext", "mta.*", "*.mtar", ".mta/"]
+   requires:
+    - name: products-sbss
+    - name: broker-audit
+    - name: broker-config
+    - name: broker-credentials
+    - name: api
+      properties:
+         SBF_SERVICE_CONFIG:
+            products-service:
+              extend_credentials:
+                shared:
+                  url: ~{service-url}/products
+
+ - name: products-service
+   type: nodejs
+   path: ./service
+   build-parameters:
+      ignore: [".gitignore", manifest.yml, "*.mtaext", "mta.*", "*.mtar", ".mta/"]
+   parameters:
+      memory: 128M
+   requires:
+    - name: products-sbss
+      properties:
+        SBSS_SERVICE_NAME: ~{service-name}
+   provides:
+    - name: api
+      properties:
+         service-url: ${default-url}
+
+resources:
+ - name: products-sbss
+   type: com.sap.xs.hana-sbss
+   properties:
+     service-name: ${service-name}
+
+ - name: broker-audit
+   type: com.sap.xs.auditlog
+
+ - name: broker-credentials
+   properties:
+     user:
+     password:
+
+ - name: broker-config
+   properties:
+     tenantId:

@@ -1,0 +1,16 @@
+#####  Extension for deployments to DEV  ####
+## To avoid name clashes, the name of the business service is suffixed with <userID>
+
+_schema-version: "3.1"
+ID: com.sap.xs2.sbf-simple-service.dev
+extends: com.sap.xs2.sbf-simple-service
+
+resources:
+  - name: broker-credentials
+    properties:
+      user: ""
+      password: ""
+
+  - name: broker-config
+    properties:
+      tenantId: ""
